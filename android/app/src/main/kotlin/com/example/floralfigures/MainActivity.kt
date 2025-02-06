@@ -1,4 +1,4 @@
-package com.example.floralfigures
+package com.floralwhites.floralfigures
 
 import io.flutter.embedding.android.FlutterActivity
 
