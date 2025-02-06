@@ -1,3 +1,6 @@
+import 'package:floralfigures/pages/home_page.dart';
+import 'package:floralfigures/themes/color.dart';
+import 'package:floralfigures/themes/text.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -9,11 +12,15 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello test!'),
-        ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: const HomePage(),
+      theme: ThemeData(
+        textTheme: textTheme,
+        useMaterial3: true,
+        colorScheme: colorScheme,
+        scaffoldBackgroundColor:
+            const Color.fromARGB(255, 244, 221, 229), // background color
       ),
     );
   }
