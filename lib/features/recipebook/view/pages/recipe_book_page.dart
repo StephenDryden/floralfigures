@@ -27,18 +27,26 @@ class RecipePage extends StatelessWidget {
             itemCount: viewModel.recipes.length,
             itemBuilder: (context, index) {
               final recipe = viewModel.recipes[index];
-              return Dismissible(
-                key: Key(recipe.name),
-                onDismissed: (direction) {
-                  viewModel.deleteRecipe(index);
-                },
-                background: Container(color: Colors.red),
-                child: ListTile(
-                  title: Text(recipe.name),
-                  subtitle: Text('Items: ${recipe.items.length}'),
-                  onTap: () {
-                    _navigateToAddRecipePage(context, index: index);
-                  },
+              return ListTile(
+                title: Text(
+                  '${recipe.name} - £${recipe.retailPrice}',
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        _navigateToAddRecipePage(context, index: index);
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        viewModel.deleteRecipe(index);
+                      },
+                    ),
+                  ],
                 ),
               );
             },

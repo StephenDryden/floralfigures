@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
       appBar: appBar(context, null, "Floral Figures"),
       body: Center(
         child: Text(
-          'Welcome to Floral Figures. Use the menu to navigate between the Flower Market, Recipe Book and Shopping List.',
+          'Welcome to Floral Figures. Use the menu to navigate between the Flower Market, Recipe Book and Shopping Trip.',
           textAlign: TextAlign.center,
         ),
       ),

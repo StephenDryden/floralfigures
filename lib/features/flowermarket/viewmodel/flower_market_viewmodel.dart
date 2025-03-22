@@ -4,17 +4,11 @@ import '../../recipebook/viewmodel/recipe_viewmodel.dart';
 
 class FlowerMarketViewModel extends ChangeNotifier {
   final List<Flower> _flowerList = [];
-  RecipeViewModel _recipeViewModel;
+  RecipeViewModel recipeViewModel;
 
-  FlowerMarketViewModel(this._recipeViewModel);
+  FlowerMarketViewModel(this.recipeViewModel);
 
   List<Flower> get flowerList => _flowerList;
-
-  RecipeViewModel get recipeViewModel => _recipeViewModel;
-
-  set recipeViewModel(RecipeViewModel value) {
-    _recipeViewModel = value;
-  }
 
   bool addFlower(Flower flower) {
     if (_flowerList.any((f) => f.name == flower.name)) {
@@ -33,7 +27,7 @@ class FlowerMarketViewModel extends ChangeNotifier {
       }
       _flowerList[index] = flower;
       notifyListeners();
-      _recipeViewModel.updateFlowerInRecipes(flower, oldFlower);
+      recipeViewModel.updateFlowerInRecipes(flower, oldFlower);
       return true;
     }
     return false;
@@ -42,7 +36,7 @@ class FlowerMarketViewModel extends ChangeNotifier {
   void deleteFlower(int index) {
     final flowerName = _flowerList[index].name;
     _flowerList.removeAt(index);
-    _recipeViewModel.removeFlowerFromRecipes(flowerName);
+    recipeViewModel.removeFlowerFromRecipes(flowerName);
     notifyListeners();
   }
 }

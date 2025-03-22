@@ -36,10 +36,10 @@ Drawer menuDrawer(context) {
                   },
                 ),
                 ListTile(
-                  title: const Text('Shopping List'),
+                  title: const Text('Shopping Trip'),
                   onTap: () {
                     Navigator.pop(context);
-                    Navigator.pushNamed(context, '/shopping_list');
+                    Navigator.pushNamed(context, '/shopping_trip');
                   },
                 ),
               ],
@@ -57,5 +57,5 @@ Drawer menuDrawer(context) {
                         //   Navigator.push(
                         //       context,
                         //       MaterialPageRoute(
-                        //           builder: (context) => ShoppingListPage()));
+                        //           builder: (context) => ShoppingTripPage()));
                         // },
