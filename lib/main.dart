@@ -5,8 +5,10 @@ import 'package:floralfigures/features/home/view/pages/home_page.dart';
 import 'package:floralfigures/features/recipebook/view/pages/recipe_book_page.dart';
 import 'package:floralfigures/features/recipebook/view/pages/add_recipe_page.dart';
 import 'package:floralfigures/features/shoppingtrip/view/pages/shopping_trip_page.dart';
+import 'package:floralfigures/features/shoppingtrip/view/pages/add_shopping_trip_page.dart';
 import 'package:floralfigures/features/flowermarket/viewmodel/flower_market_viewmodel.dart';
 import 'package:floralfigures/features/recipebook/viewmodel/recipe_viewmodel.dart';
+import 'package:floralfigures/features/shoppingtrip/viewmodel/shopping_trip_viewmodel.dart'; // Import the ShoppingTripViewModel
 import 'package:floralfigures/themes/color.dart';
 import 'package:floralfigures/themes/text.dart';
 
@@ -22,6 +24,7 @@ class MainApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => RecipeViewModel()),
+        ChangeNotifierProvider(create: (_) => ShoppingTripViewModel()),
         ChangeNotifierProxyProvider<RecipeViewModel, FlowerMarketViewModel>(
           create: (context) => FlowerMarketViewModel(
             Provider.of<RecipeViewModel>(context, listen: false),
@@ -48,6 +51,7 @@ class MainApp extends StatelessWidget {
           '/recipe_book': (context) => RecipePage(),
           '/add_recipe': (context) => AddRecipePage(),
           '/shopping_trip': (context) => ShoppingTripPage(),
+          '/add_shopping_trip': (context) => AddShoppingTripPage(),
         },
       ),
     );

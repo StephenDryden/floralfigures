@@ -5,6 +5,8 @@ import '../model/recipe_model.dart';
 class RecipeViewModel extends ChangeNotifier {
   final List<Recipe> _recipes = [];
 
+  RecipeViewModel();
+
   List<Recipe> get recipes => _recipes;
 
   void addRecipe(Recipe recipe) {
