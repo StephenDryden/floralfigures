@@ -3,8 +3,10 @@ import 'package:provider/provider.dart';
 import '../../../flowermarket/model/flower_model.dart';
 import '../../../flowermarket/viewmodel/flower_market_viewmodel.dart';
 import 'package:floralfigures/utils/my_button.dart';
+import 'package:flutter/services.dart';
+import 'package:floralfigures/utils/quantity_input_field.dart';
 
-class AddFlowerDialog extends StatelessWidget {
+class AddFlowerDialog extends StatefulWidget {
   final TextEditingController stemQuantityController;
   final Flower? selectedFlower;
   final ValueChanged<Flower?> onFlowerChanged;
@@ -21,6 +23,19 @@ class AddFlowerDialog extends StatelessWidget {
   });
 
   @override
+  AddFlowerDialogState createState() => AddFlowerDialogState();
+}
+
+class AddFlowerDialogState extends State<AddFlowerDialog> {
+  Flower? _selectedFlower;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedFlower = widget.selectedFlower;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       shape: const RoundedRectangleBorder(
@@ -34,8 +49,13 @@ class AddFlowerDialog extends StatelessWidget {
               builder: (context, flowerViewModel, child) {
                 return DropdownButton<Flower>(
                   hint: Text('Select Flower'),
-                  value: selectedFlower,
-                  onChanged: onFlowerChanged,
+                  value: _selectedFlower,
+                  onChanged: (Flower? newValue) {
+                    setState(() {
+                      _selectedFlower = newValue;
+                    });
+                    widget.onFlowerChanged(newValue);
+                  },
                   items: flowerViewModel.flowerList
                       .map<DropdownMenuItem<Flower>>((Flower flower) {
                     return DropdownMenuItem<Flower>(
@@ -47,9 +67,9 @@ class AddFlowerDialog extends StatelessWidget {
               },
             ),
             const SizedBox(height: 5),
-            InputField(
+            QuantityInputField(
               hint: "Quantity",
-              controller: stemQuantityController,
+              controller: widget.stemQuantityController,
             ),
             const SizedBox(height: 5),
             Row(
@@ -57,12 +77,12 @@ class AddFlowerDialog extends StatelessWidget {
               children: [
                 MyButton(
                   text: "Save",
-                  onPressed: onSave,
+                  onPressed: widget.onSave,
                 ),
                 const SizedBox(width: 8),
                 MyButton(
                   text: "Cancel",
-                  onPressed: onCancel,
+                  onPressed: widget.onCancel,
                 )
               ],
             )
@@ -78,10 +98,12 @@ class InputField extends StatelessWidget {
     super.key,
     required this.hint,
     required this.controller,
+    this.inputFormatters,
   });
 
   final String hint;
   final TextEditingController controller;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -103,9 +125,12 @@ class InputField extends StatelessWidget {
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.only(left: 10),
+                labelStyle: TextStyle(color: Colors.black),
               ),
               controller: controller,
               keyboardType: TextInputType.number,
+              cursorColor: Colors.black,
+              inputFormatters: inputFormatters,
             ),
           ),
         ],
