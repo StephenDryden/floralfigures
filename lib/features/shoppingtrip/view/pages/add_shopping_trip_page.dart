@@ -4,6 +4,7 @@ import 'package:floralfigures/features/shoppingtrip/viewmodel/shopping_trip_view
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../widgets/labeled_text_field.dart';
 import '../widgets/add_recipe_to_trip_dialog.dart';
 
 class AddShoppingTripPage extends StatefulWidget {
@@ -144,9 +145,9 @@ class AddShoppingTripPageState extends State<AddShoppingTripPage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
+            child: LabeledTextField(
               controller: _nameController,
-              decoration: InputDecoration(labelText: 'Shopping Trip Name'),
+              label: 'Shopping Trip Name',
             ),
           ),
           Expanded(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../widgets/labeled_text_field.dart';
 import '../../../flowermarket/model/flower_model.dart';
 import '../widgets/add_flower_to_recipe_dialog.dart';
 import '../../model/recipe_model.dart';
@@ -186,9 +187,9 @@ class AddRecipePageState extends State<AddRecipePage> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
+            child: LabeledTextField(
               controller: _nameController,
-              decoration: InputDecoration(labelText: 'Recipe Name'),
+              label: 'Recipe Name',
             ),
           ),
           Expanded(

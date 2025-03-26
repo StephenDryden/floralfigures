@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:floralfigures/utils/my_button.dart';
+import 'package:flutter/services.dart';
+import 'package:floralfigures/utils/quantity_input_field.dart';
 
 import '../../../recipebook/model/recipe_model.dart';
 import '../../../recipebook/viewmodel/recipe_viewmodel.dart';
 
-class AddRecipeDialog extends StatelessWidget {
+class AddRecipeDialog extends StatefulWidget {
   final TextEditingController quantityController;
   final Recipe? selectedRecipe;
   final ValueChanged<Recipe?> onRecipeChanged;
@@ -22,6 +24,19 @@ class AddRecipeDialog extends StatelessWidget {
   });
 
   @override
+  AddRecipeDialogState createState() => AddRecipeDialogState();
+}
+
+class AddRecipeDialogState extends State<AddRecipeDialog> {
+  Recipe? _selectedRecipe;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedRecipe = widget.selectedRecipe;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
       shape: const RoundedRectangleBorder(
@@ -35,8 +50,13 @@ class AddRecipeDialog extends StatelessWidget {
               builder: (context, recipeViewModel, child) {
                 return DropdownButton<Recipe>(
                   hint: Text('Select Recipe'),
-                  value: selectedRecipe,
-                  onChanged: onRecipeChanged,
+                  value: _selectedRecipe,
+                  onChanged: (Recipe? newValue) {
+                    setState(() {
+                      _selectedRecipe = newValue;
+                    });
+                    widget.onRecipeChanged(newValue);
+                  },
                   items: recipeViewModel.recipes
                       .map<DropdownMenuItem<Recipe>>((Recipe recipe) {
                     return DropdownMenuItem<Recipe>(
@@ -48,9 +68,9 @@ class AddRecipeDialog extends StatelessWidget {
               },
             ),
             const SizedBox(height: 5),
-            InputField(
+            QuantityInputField(
               hint: "Quantity",
-              controller: quantityController,
+              controller: widget.quantityController,
             ),
             const SizedBox(height: 5),
             Row(
@@ -58,12 +78,12 @@ class AddRecipeDialog extends StatelessWidget {
               children: [
                 MyButton(
                   text: "Save",
-                  onPressed: onSave,
+                  onPressed: widget.onSave,
                 ),
                 const SizedBox(width: 8),
                 MyButton(
                   text: "Cancel",
-                  onPressed: onCancel,
+                  onPressed: widget.onCancel,
                 )
               ],
             )
@@ -79,10 +99,12 @@ class InputField extends StatelessWidget {
     super.key,
     required this.hint,
     required this.controller,
+    this.inputFormatters,
   });
 
   final String hint;
   final TextEditingController controller;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +126,12 @@ class InputField extends StatelessWidget {
               decoration: const InputDecoration(
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.only(left: 10),
+                labelStyle: TextStyle(color: Colors.black),
               ),
               controller: controller,
               keyboardType: TextInputType.number,
+              cursorColor: Colors.black,
+              inputFormatters: inputFormatters,
             ),
           ),
         ],
