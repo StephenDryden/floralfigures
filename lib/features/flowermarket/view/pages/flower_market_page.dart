@@ -107,7 +107,7 @@ class FlowerMarketPage extends StatelessWidget {
               return ListTile(
                 title: Text(flower.name),
                 subtitle: Text(
-                    'Price per stem: £${flower.pricePerStem} - Stems per bundle: ${flower.stemsPerBundle}'),
+                    'Price per stem:       £${flower.pricePerStem}\nStems per bundle:  ${flower.stemsPerBundle}'),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

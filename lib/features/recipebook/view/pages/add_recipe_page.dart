@@ -54,7 +54,7 @@ class AddRecipePageState extends State<AddRecipePage> {
       _stemQuantityController.text = item.quantity.toString();
     } else {
       _selectedFlower = null;
-      _stemQuantityController.text = "10"; // Default value for stems
+      _stemQuantityController.text = "1"; // Default value for stems
     }
 
     final RecipeItem? newItem = await showDialog<RecipeItem>(

@@ -44,4 +44,25 @@ class ShoppingTripViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Map<String, int> summarizeFlowers() {
+    final flowerTotals = <String, int>{};
+
+    for (var shoppingTrip in _shoppingTrips) {
+      for (var item in shoppingTrip.items) {
+        final recipe = item.recipe;
+        final quantity = item.quantity;
+
+        for (var recipeItem in recipe.items) {
+          final flowerType = recipeItem.flower.name;
+          final flowerQuantity = recipeItem.quantity * quantity;
+
+          flowerTotals[flowerType] =
+              (flowerTotals[flowerType] ?? 0) + flowerQuantity;
+        }
+      }
+    }
+
+    return flowerTotals;
+  }
 }

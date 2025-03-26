@@ -4,6 +4,7 @@ import '../model/recipe_model.dart';
 
 class RecipeViewModel extends ChangeNotifier {
   final List<Recipe> _recipes = [];
+  final List<Flower> availableFlowers = []; // Add this property
 
   RecipeViewModel();
 
@@ -71,5 +72,11 @@ class RecipeViewModel extends ChangeNotifier {
   double calculateGuidePrice(Recipe recipe) {
     final subtotal = calculateSubtotal(recipe);
     return subtotal + (subtotal * recipe.labourPercentage / 100);
+  }
+
+  List<Flower> getAvailableFlowersExcluding(List<RecipeItem> items) {
+    return availableFlowers
+        .where((flower) => !items.any((item) => item.flower == flower))
+        .toList();
   }
 }

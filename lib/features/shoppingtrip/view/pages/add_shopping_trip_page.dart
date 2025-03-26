@@ -116,6 +116,9 @@ class AddShoppingTripPageState extends State<AddShoppingTripPage> {
 
   @override
   Widget build(BuildContext context) {
+    final flowerSummary =
+        Provider.of<ShoppingTripViewModel>(context).summarizeFlowers();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Shopping Trip'),
@@ -177,6 +180,22 @@ class AddShoppingTripPageState extends State<AddShoppingTripPage> {
                   ),
                 );
               },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Flower Summary:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                ...flowerSummary.entries.map((entry) => Text(
+                      '${entry.key}: ${entry.value}',
+                      style: TextStyle(fontSize: 14),
+                    )),
+              ],
             ),
           ),
         ],
