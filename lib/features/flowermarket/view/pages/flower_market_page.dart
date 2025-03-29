@@ -5,60 +5,76 @@ import '../../viewmodel/flower_market_viewmodel.dart';
 import 'package:floralfigures/features/flowermarket/view/widgets/add_flower_to_flower_market_dialog.dart';
 import 'package:floralfigures/utils/app_bar.dart';
 import 'package:floralfigures/utils/menu_drawer.dart';
+import '../widgets/flower_list_widget.dart';
 
 class FlowerMarketPage extends StatelessWidget {
   const FlowerMarketPage({super.key});
 
-  void _showAddFlowerDialog(BuildContext context, {int? index}) {
-    final stemNameController = TextEditingController();
-    final stemQuantityController = TextEditingController(text: "10");
-    final stemPriceController = TextEditingController(text: "0.50");
-
-    if (index != null) {
-      final flower = Provider.of<FlowerMarketViewModel>(context, listen: false)
-          .flowerList[index];
-      stemNameController.text = flower.name;
-      stemQuantityController.text = flower.stemsPerBundle.toString();
-      stemPriceController.text = flower.pricePerStem.toString();
-    } else {
-      stemNameController.clear();
-      stemQuantityController.text = "10";
-      stemPriceController.text = "0.50";
-    }
+  void _showAddFlowerDialog(BuildContext context, {String? id}) {
+    final controllers = _initializeControllers(context, id);
 
     showDialog(
       context: context,
       builder: (context) {
         return AddFlowerDialog(
-          stemNameController: stemNameController,
-          stemQuantityController: stemQuantityController,
-          stemPriceController: stemPriceController,
-          onSave: () {
-            final name = stemNameController.text;
-            final price = double.tryParse(stemPriceController.text) ?? 0.0;
-            final stems = int.tryParse(stemQuantityController.text) ?? 0;
-
-            final flower =
-                Flower(name: name, pricePerStem: price, stemsPerBundle: stems);
-
-            if (index == null) {
-              if (!_addFlower(context, flower)) {
-                _showFlowerExistsDialog(context);
-                return;
-              }
-            } else {
-              if (!_editFlower(context, index, flower)) {
-                _showFlowerExistsDialog(context);
-                return;
-              }
-            }
-
-            Navigator.of(context).pop();
-          },
+          stemNameController: controllers['name']!,
+          stemQuantityController: controllers['quantity']!,
+          stemPriceController: controllers['price']!,
+          onSave: () => _handleSave(context, id, controllers),
           onCancel: () => Navigator.of(context).pop(),
         );
       },
     );
+  }
+
+  Map<String, TextEditingController> _initializeControllers(
+      BuildContext context, String? id) {
+    final nameController = TextEditingController();
+    final quantityController = TextEditingController(text: "10");
+    final priceController = TextEditingController(text: "0.50");
+
+    if (id != null) {
+      final flower = Provider.of<FlowerMarketViewModel>(context, listen: false)
+          .flowerList
+          .firstWhere((f) => f.id == id);
+      nameController.text = flower.name;
+      quantityController.text = flower.stemsPerBundle.toString();
+      priceController.text = flower.pricePerStem.toString();
+    }
+
+    return {
+      'name': nameController,
+      'quantity': quantityController,
+      'price': priceController,
+    };
+  }
+
+  void _handleSave(BuildContext context, String? id,
+      Map<String, TextEditingController> controllers) {
+    final name = controllers['name']!.text;
+    final price = double.tryParse(controllers['price']!.text) ?? 0.0;
+    final stems = int.tryParse(controllers['quantity']!.text) ?? 0;
+
+    final flower = Flower(
+      id: id,
+      name: name,
+      pricePerStem: price,
+      stemsPerBundle: stems,
+    );
+
+    final flowerMarketViewModel =
+        Provider.of<FlowerMarketViewModel>(context, listen: false);
+
+    final success = id == null
+        ? flowerMarketViewModel.addFlower(flower)
+        : flowerMarketViewModel.editFlower(flower);
+
+    if (!success) {
+      _showFlowerExistsDialog(context);
+      return;
+    }
+
+    Navigator.of(context).pop();
   }
 
   void _showFlowerExistsDialog(BuildContext context) {
@@ -81,54 +97,13 @@ class FlowerMarketPage extends StatelessWidget {
     );
   }
 
-  bool _addFlower(BuildContext context, Flower flower) {
-    final flowerMarketViewModel =
-        Provider.of<FlowerMarketViewModel>(context, listen: false);
-    return flowerMarketViewModel.addFlower(flower);
-  }
-
-  bool _editFlower(BuildContext context, int index, Flower flower) {
-    final flowerMarketViewModel =
-        Provider.of<FlowerMarketViewModel>(context, listen: false);
-    return flowerMarketViewModel.editFlower(index, flower);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:
           appBar(context, () => _showAddFlowerDialog(context), 'Flower Market'),
-      body: Consumer<FlowerMarketViewModel>(
-        builder: (context, viewModel, child) {
-          return ListView.builder(
-            itemCount: viewModel.flowerList.length,
-            itemBuilder: (context, index) {
-              final flower = viewModel.flowerList[index];
-              return ListTile(
-                title: Text(flower.name),
-                subtitle: Text(
-                    'Price per stem:       £${flower.pricePerStem}\nStems per bundle:  ${flower.stemsPerBundle}'),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        _showAddFlowerDialog(context, index: index);
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        viewModel.deleteFlower(index);
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
+      body: FlowerListWidget(
+        onEdit: (id) => _showAddFlowerDialog(context, id: id),
       ),
       drawer: menuDrawer(context),
     );

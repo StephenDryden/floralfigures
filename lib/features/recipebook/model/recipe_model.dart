@@ -1,15 +1,18 @@
+import 'package:uuid/uuid.dart';
 import '../../flowermarket/model/flower_model.dart';
 
 class Recipe {
-  final String name;
-  final List<RecipeItem> items;
-  final double vatPercentage;
-  final double markup;
-  final double sundries;
-  final double labourPercentage;
-  final double retailPrice;
+  String id; // Unique identifier
+  String name; // Removed 'final' to allow updates
+  List<RecipeItem> items;
+  double vatPercentage;
+  double markup;
+  double sundries;
+  double labourPercentage;
+  double retailPrice;
 
   Recipe({
+    String? id,
     required this.name,
     required this.items,
     this.vatPercentage = 20.0,
@@ -17,7 +20,7 @@ class Recipe {
     this.sundries = 1.0,
     this.labourPercentage = 15.0,
     this.retailPrice = 0.0,
-  });
+  }) : id = id ?? const Uuid().v4(); // Generate ID if not provided
 }
 
 class RecipeItem {

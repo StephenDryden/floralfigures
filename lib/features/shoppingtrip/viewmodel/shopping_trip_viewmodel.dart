@@ -54,11 +54,11 @@ class ShoppingTripViewModel extends ChangeNotifier {
         final quantity = item.quantity;
 
         for (var recipeItem in recipe.items) {
-          final flowerType = recipeItem.flower.name;
+          final flowerId = recipeItem.flower.id;
           final flowerQuantity = recipeItem.quantity * quantity;
 
-          flowerTotals[flowerType] =
-              (flowerTotals[flowerType] ?? 0) + flowerQuantity;
+          flowerTotals[flowerId] =
+              (flowerTotals[flowerId] ?? 0) + flowerQuantity;
         }
       }
     }

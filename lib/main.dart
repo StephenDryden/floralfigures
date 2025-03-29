@@ -23,17 +23,18 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => RecipeViewModel()),
-        ChangeNotifierProvider(create: (_) => ShoppingTripViewModel()),
-        ChangeNotifierProxyProvider<RecipeViewModel, FlowerMarketViewModel>(
-          create: (context) => FlowerMarketViewModel(
-            Provider.of<RecipeViewModel>(context, listen: false),
-          ),
-          update: (context, recipeViewModel, flowerMarketViewModel) {
-            flowerMarketViewModel?.recipeViewModel = recipeViewModel;
-            return flowerMarketViewModel!;
+        ChangeNotifierProvider<FlowerMarketViewModel>(
+          create: (context) => FlowerMarketViewModel(),
+        ),
+        ChangeNotifierProxyProvider<FlowerMarketViewModel, RecipeViewModel>(
+          create: (context) => RecipeViewModel(
+              Provider.of<FlowerMarketViewModel>(context, listen: false)),
+          update: (context, flowerMarketViewModel, recipeViewModel) {
+            recipeViewModel ??= RecipeViewModel(flowerMarketViewModel);
+            return recipeViewModel;
           },
         ),
+        ChangeNotifierProvider(create: (_) => ShoppingTripViewModel()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

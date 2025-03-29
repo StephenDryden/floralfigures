@@ -21,7 +21,7 @@ class ShoppingTripPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar(context, () => _navigateToAddShoppingTripPage(context),
-          'Recipe Book'),
+          'Shopping Trips'),
       body: Consumer<ShoppingTripViewModel>(
         builder: (context, viewModel, child) {
           return ListView.builder(

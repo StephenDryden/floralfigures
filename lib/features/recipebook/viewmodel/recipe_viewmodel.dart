@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import '../../flowermarket/model/flower_model.dart';
+import '../../flowermarket/viewmodel/flower_market_viewmodel.dart';
 import '../model/recipe_model.dart';
 
 class RecipeViewModel extends ChangeNotifier {
   final List<Recipe> _recipes = [];
-  final List<Flower> availableFlowers = []; // Add this property
 
-  RecipeViewModel();
+  RecipeViewModel(FlowerMarketViewModel flowerMarketViewModel) {
+    flowerMarketViewModel.addListener(() {
+      _updateFlowersInRecipes(flowerMarketViewModel.flowerList);
+    });
+
+    flowerMarketViewModel.addListener(() {
+      _removeDeletedFlowersFromRecipes(flowerMarketViewModel.flowerList);
+    });
+  }
 
   List<Recipe> get recipes => _recipes;
 
@@ -15,33 +23,22 @@ class RecipeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void editRecipe(int index, Recipe recipe) {
-    _recipes[index] = recipe;
-    notifyListeners();
-  }
-
-  void deleteRecipe(int index) {
-    _recipes.removeAt(index);
-    notifyListeners();
-  }
-
-  void updateFlowerInRecipes(Flower newFlower, Flower oldFlower) {
-    for (var recipe in _recipes) {
-      for (var i = 0; i < recipe.items.length; i++) {
-        if (recipe.items[i].flower.name == oldFlower.name) {
-          recipe.items[i] = RecipeItem(
-            flower: newFlower,
-            quantity: recipe.items[i].quantity,
-          );
-        }
-      }
+  void editRecipe(String recipeId, Recipe updatedRecipe) {
+    final index = _recipes.indexWhere((recipe) => recipe.id == recipeId);
+    if (index != -1) {
+      _recipes[index] = updatedRecipe;
+      notifyListeners();
     }
+  }
+
+  void deleteRecipe(String recipeId) {
+    _recipes.removeWhere((recipe) => recipe.id == recipeId);
     notifyListeners();
   }
 
-  void removeFlowerFromRecipes(String flowerName) {
+  void removeFlowerFromRecipes(String flowerId) {
     for (var recipe in _recipes) {
-      recipe.items.removeWhere((item) => item.flower.name == flowerName);
+      recipe.items.removeWhere((item) => item.flower.id == flowerId);
     }
     notifyListeners();
   }
@@ -74,9 +71,95 @@ class RecipeViewModel extends ChangeNotifier {
     return subtotal + (subtotal * recipe.labourPercentage / 100);
   }
 
-  List<Flower> getAvailableFlowersExcluding(List<RecipeItem> items) {
-    return availableFlowers
-        .where((flower) => !items.any((item) => item.flower == flower))
-        .toList();
+  Recipe createRecipe({
+    required String name,
+    required List<RecipeItem> items,
+    required double vatPercentage,
+    required double markup,
+    required double sundries,
+    required double labourPercentage,
+    required double retailPrice,
+  }) {
+    return Recipe(
+      name: name,
+      items: items,
+      vatPercentage: vatPercentage,
+      markup: markup,
+      sundries: sundries,
+      labourPercentage: labourPercentage,
+      retailPrice: retailPrice,
+    );
+  }
+
+  Recipe createEmptyRecipe() {
+    return Recipe(
+      id: UniqueKey().toString(),
+      name: '',
+      items: [],
+      vatPercentage: 20.0,
+      markup: 1.0,
+      sundries: 1.0,
+      labourPercentage: 15.0,
+      retailPrice: 0.0,
+    );
+  }
+
+  Recipe getRecipeById(String id) {
+    return recipes.firstWhere((recipe) => recipe.id == id);
+  }
+
+  void saveRecipe(String? recipeId, Recipe recipe) {
+    if (recipeId == null) {
+      addRecipe(recipe);
+    } else {
+      editRecipe(recipeId, recipe);
+    }
+    notifyListeners();
+  }
+
+  void addItemToRecipe(Recipe recipe, RecipeItem item) {
+    recipe.items.add(item);
+    notifyListeners();
+  }
+
+  void updateItemInRecipe(Recipe recipe, int index, RecipeItem updatedItem) {
+    recipe.items[index] = updatedItem;
+    notifyListeners();
+  }
+
+  void removeItemFromRecipe(Recipe recipe, int index) {
+    recipe.items.removeAt(index);
+    notifyListeners();
+  }
+
+  void updateRecipeCalculations(Recipe recipe) {
+    // Trigger recalculation logic if needed
+    notifyListeners();
+  }
+
+  void _updateFlowersInRecipes(List<Flower> updatedFlowers) {
+    for (var recipe in _recipes) {
+      for (var i = 0; i < recipe.items.length; i++) {
+        final flower = recipe.items[i].flower;
+        final updatedFlower = updatedFlowers.firstWhere(
+          (f) => f.id == flower.id, // Match by id
+          orElse: () => flower,
+        );
+        recipe.items[i] = RecipeItem(
+          flower: updatedFlower,
+          quantity: recipe.items[i].quantity,
+        );
+      }
+    }
+    notifyListeners();
+  }
+
+  void _removeDeletedFlowersFromRecipes(List<Flower> updatedFlowers) {
+    final updatedFlowerIds = updatedFlowers.map((f) => f.id).toSet();
+    for (var recipe in _recipes) {
+      recipe.items
+          .removeWhere((item) => !updatedFlowerIds.contains(item.flower.id));
+    }
+    notifyListeners();
   }
 }

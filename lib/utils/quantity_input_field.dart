@@ -15,7 +15,7 @@ class QuantityInputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      padding: const EdgeInsets.all(5.0),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
       ),
@@ -42,7 +42,7 @@ class QuantityInputField extends StatelessWidget {
             child: TextField(
               decoration: const InputDecoration(
                 border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                contentPadding: EdgeInsets.only(left: 10),
               ),
               controller: controller,
               keyboardType: TextInputType.number,

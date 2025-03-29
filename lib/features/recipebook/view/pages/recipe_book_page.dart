@@ -8,10 +8,12 @@ import 'package:floralfigures/utils/app_bar.dart';
 class RecipePage extends StatelessWidget {
   const RecipePage({super.key});
 
-  void _navigateToAddRecipePage(BuildContext context, {int? index}) {
+  void _navigateToAddRecipePage(BuildContext context, {String? recipeId}) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => AddRecipePage(recipeIndex: index),
+        builder: (context) => AddRecipePage(
+          recipeId: recipeId, // Pass recipeId instead of index
+        ),
       ),
     );
   }
@@ -37,13 +39,14 @@ class RecipePage extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.edit),
                       onPressed: () {
-                        _navigateToAddRecipePage(context, index: index);
+                        _navigateToAddRecipePage(context,
+                            recipeId: recipe.id); // Pass recipe.id
                       },
                     ),
                     IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () {
-                        viewModel.deleteRecipe(index);
+                        viewModel.deleteRecipe(recipe.id); // Use recipe.id
                       },
                     ),
                   ],
